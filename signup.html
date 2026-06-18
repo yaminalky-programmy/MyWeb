@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create your account — MyWeb</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <style>
+      .auth-page {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .auth-main {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 24px;
+      }
+      .auth-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 44px 40px;
+        width: 100%;
+        max-width: 440px;
+      }
+      .auth-logo {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: 28px;
+      }
+      .auth-logo i { color: var(--primary); }
+      .auth-card h1 {
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: 6px;
+      }
+      .auth-card .auth-sub {
+        font-size: 0.9rem;
+        color: var(--muted);
+        margin-bottom: 28px;
+      }
+      .plan-selector {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-bottom: 24px;
+      }
+      .plan-option { display: none; }
+      .plan-label {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        padding: 12px 8px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        cursor: pointer;
+        transition: all 0.18s;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--muted);
+      }
+      .plan-label span.plan-price { font-size: 0.72rem; color: var(--muted); font-weight: 400; }
+      .plan-option:checked + .plan-label {
+        border-color: var(--primary);
+        background: rgba(224,48,48,0.08);
+        color: var(--text);
+      }
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 16px;
+      }
+      .form-group label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text);
+      }
+      .form-group input {
+        padding: 12px 16px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: var(--bg);
+        color: var(--text);
+        font-size: 0.95rem;
+        font-family: var(--font);
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .form-group input:focus { border-color: var(--primary); }
+      .form-group input::placeholder { color: var(--muted); }
+      .auth-submit {
+        width: 100%;
+        justify-content: center;
+        margin-top: 8px;
+        padding: 14px;
+        font-size: 1rem;
+      }
+      .auth-agree {
+        font-size: 0.78rem;
+        color: var(--muted);
+        text-align: center;
+        margin-top: 14px;
+        line-height: 1.5;
+      }
+      .auth-agree a { color: var(--primary-h); text-decoration: underline; }
+      .auth-signin {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+      .auth-signin a { color: var(--primary-h); font-weight: 600; }
+      .auth-message {
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-size: 0.88rem;
+        margin-bottom: 16px;
+        display: none;
+      }
+      .auth-message--error { background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.3); color: #fca5a5; }
+      .auth-message--success { background: rgba(74,222,128,0.1); border: 1px solid rgba(74,222,128,0.3); color: #4ade80; }
+      .auth-divider { display:flex; align-items:center; gap:12px; margin:20px 0; }
+      .auth-divider span { font-size:0.78rem; color:var(--muted); white-space:nowrap; }
+      .auth-divider::before, .auth-divider::after { content:''; flex:1; height:1px; background:var(--border); }
+      .social-btns { display:flex; flex-direction:column; gap:10px; }
+      .btn--social { display:flex; align-items:center; justify-content:center; gap:10px; width:100%; padding:12px 16px; border-radius:10px; border:1px solid var(--border); background:var(--surface); color:var(--text); font-size:0.92rem; font-weight:600; font-family:var(--font); cursor:pointer; transition:all 0.18s; }
+      .btn--social:hover { border-color:var(--muted); background:rgba(255,255,255,0.04); }
+      .btn--social img { width:18px; height:18px; object-fit:contain; }
+      @media (max-width: 480px) {
+        .auth-card { padding: 32px 24px; }
+      }
+    </style>
+  </head>
+  <body class="auth-page">
+    <nav class="nav">
+      <div class="nav__inner">
+        <a class="nav__logo" href="/">
+          <i class="fa-solid fa-shield-halved"></i> MyWeb
+        </a>
+        <ul class="nav__links">
+          <li><a href="/#features">Features</a></li>
+          <li><a href="/#pricing">Pricing</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <main class="auth-main">
+      <div class="auth-card">
+        <div class="auth-logo"><i class="fa-solid fa-shield-halved"></i> MyWeb</div>
+        <h1>Create your account</h1>
+        <p class="auth-sub">Free forever. No credit card required.</p>
+
+        <div id="auth-msg" class="auth-message"></div>
+
+        <form id="signup-form">
+          <p style="font-size:0.82rem;font-weight:600;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.05em;">Choose a plan</p>
+          <div class="plan-selector">
+            <input type="radio" name="plan" id="plan-free" value="free" class="plan-option" checked />
+            <label for="plan-free" class="plan-label">Free <span class="plan-price">$0 / mo</span></label>
+
+            <input type="radio" name="plan" id="plan-pro" value="pro" class="plan-option" />
+            <label for="plan-pro" class="plan-label">Pro <span class="plan-price">$7 / mo</span></label>
+
+            <input type="radio" name="plan" id="plan-ultimate" value="ultimate" class="plan-option" />
+            <label for="plan-ultimate" class="plan-label">Ultimate <span class="plan-price">$19 / mo</span></label>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email address</label>
+            <input type="email" id="email" name="email" placeholder="you@example.com" required autocomplete="email" />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Minimum 8 characters" required autocomplete="new-password" />
+          </div>
+
+          <button type="submit" class="btn btn--primary auth-submit" id="submit-btn">
+            <i class="fa-solid fa-user-plus"></i> Create free account
+          </button>
+        </form>
+
+        <p class="auth-agree">
+          By signing up you agree to our <a href="/tos">Terms of Service</a> and <a href="/privacy">Privacy Policy</a>.
+        </p>
+
+        <div class="auth-divider"><span>or sign up with</span></div>
+        <div class="social-btns">
+          <button class="btn--social" onclick="socialToast()">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" />
+            Continue with Google
+          </button>
+          <button class="btn--social" onclick="socialToast()">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple" style="filter:invert(1);width:16px;height:16px;" />
+            Continue with Apple
+          </button>
+          <button class="btn--social" onclick="socialToast()">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png" alt="Facebook" style="width:18px;height:18px;border-radius:4px;" />
+            Continue with Facebook
+          </button>
+        </div>
+
+        <p class="auth-signin">Already have an account? <a href="/login">Sign in</a></p>
+      </div>
+    </main>
+
+    <script>
+      function socialToast() {
+        const t = document.createElement('div');
+        t.textContent = 'Social sign-up coming soon';
+        Object.assign(t.style, { position:'fixed', bottom:'28px', left:'50%', transform:'translateX(-50%)', background:'#1a0a0a', border:'1px solid var(--border)', color:'var(--muted)', padding:'10px 22px', borderRadius:'99px', fontSize:'0.85rem', zIndex:'9999', transition:'opacity 0.4s' });
+        document.body.appendChild(t);
+        setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 400); }, 2200);
+      }
+
+      const form = document.getElementById('signup-form');
+      const msg = document.getElementById('auth-msg');
+      const btn = document.getElementById('submit-btn');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        msg.style.display = 'none';
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating account…';
+
+        const plan = form.querySelector('input[name="plan"]:checked').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        try {
+          const res = await fetch('/api/signup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password, plan })
+          });
+          const data = await res.json();
+
+          if (data.success) {
+            msg.className = 'auth-message auth-message--success';
+            msg.innerHTML = '<i class="fa-solid fa-circle-check"></i> Account created! Redirecting…';
+            msg.style.display = 'block';
+            btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Account created!';
+            setTimeout(() => { window.location.href = '/dashboard'; }, 900);
+          } else {
+            msg.className = 'auth-message auth-message--error';
+            msg.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> ' + data.error;
+            msg.style.display = 'block';
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Create free account';
+          }
+        } catch {
+          msg.className = 'auth-message auth-message--error';
+          msg.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Network error. Please try again.';
+          msg.style.display = 'block';
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Create free account';
+        }
+      });
+    </script>
+  </body>
+</html>

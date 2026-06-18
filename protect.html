@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Shield — Protect Your Images · MyWeb</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <style>
+      body { display: flex; flex-direction: column; min-height: 100vh; }
+
+      /* ── Hero ── */
+      .protect-hero { padding: 72px 24px 52px; text-align: center; position: relative; overflow: hidden; }
+      .protect-hero::before { content:''; position:absolute; inset:0; background: radial-gradient(ellipse 700px 300px at 50% 0%, rgba(224,48,48,0.12), transparent 70%); pointer-events:none; }
+      .protect-hero h1 { font-size: clamp(2rem,4vw,3rem); font-weight: 800; color: #fff; margin-bottom: 14px; }
+      .protect-hero h1 span { color: var(--primary); }
+      .protect-hero p { color: var(--muted); font-size: 1rem; max-width: 520px; margin: 0 auto 28px; line-height: 1.7; }
+      .badges { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+      .badges span { background: var(--surface); border: 1px solid var(--border); border-radius: 99px; padding: 5px 14px; font-size: 0.78rem; color: var(--muted); }
+      .badges span i { color: var(--primary); margin-right: 5px; }
+
+      /* ── Main tool card ── */
+      .tool-wrap { max-width: 960px; margin: 0 auto; padding: 0 24px 80px; }
+
+      /* ── Upload zone ── */
+      .upload-zone { border: 2px dashed var(--border); border-radius: 18px; padding: 56px 24px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--surface); position: relative; }
+      .upload-zone:hover, .upload-zone.drag-over { border-color: var(--primary); background: rgba(224,48,48,0.05); }
+      .upload-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+      .upload-zone .uz-icon { font-size: 2.4rem; color: var(--primary); margin-bottom: 14px; }
+      .upload-zone h2 { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
+      .upload-zone p { font-size: 0.85rem; color: var(--muted); }
+      .upload-zone .uz-hint { font-size: 0.75rem; color: var(--muted); margin-top: 8px; }
+
+      /* ── Options row ── */
+      .options-row { display: flex; align-items: center; gap: 16px; margin: 20px 0; flex-wrap: wrap; }
+      .options-row label { font-size: 0.85rem; font-weight: 600; color: var(--text); white-space: nowrap; }
+      .strength-btns { display: flex; gap: 8px; }
+      .str-btn { padding: 8px 18px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); color: var(--muted); font-size: 0.85rem; cursor: pointer; font-family: var(--font); font-weight: 600; transition: all 0.18s; }
+      .str-btn.active { border-color: var(--primary); background: rgba(224,48,48,0.1); color: #fff; }
+      .str-btn:hover:not(.active) { border-color: var(--muted); color: var(--text); }
+      .str-tip { font-size: 0.78rem; color: var(--muted); margin-left: 4px; }
+
+      .protect-btn { padding: 13px 28px; font-size: 1rem; }
+      .protect-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+      /* ── Progress ── */
+      .progress-wrap { margin: 18px 0; display: none; }
+      .progress-bar-outer { background: var(--border); border-radius: 99px; height: 6px; overflow: hidden; }
+      .progress-bar-inner { height: 100%; background: linear-gradient(90deg, var(--primary), #f87171); border-radius: 99px; transition: width 0.3s; width: 0%; }
+      .progress-label { font-size: 0.78rem; color: var(--muted); margin-top: 6px; }
+
+      /* ── Preview ── */
+      .preview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 28px; display: none; }
+      .preview-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+      .preview-card .pc-label { padding: 12px 16px; font-size: 0.82rem; font-weight: 700; color: var(--muted); display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); }
+      .preview-card .pc-label i { color: var(--primary); }
+      .preview-card img { width: 100%; display: block; max-height: 420px; object-fit: contain; background: #0a0a0a; }
+
+      /* ── Download area ── */
+      .download-area { background: rgba(74,222,128,0.06); border: 1px solid rgba(74,222,128,0.2); border-radius: 14px; padding: 20px 24px; margin-top: 20px; display: none; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+      .download-info { font-size: 0.88rem; color: var(--muted); }
+      .download-info strong { color: #4ade80; }
+
+      /* ── How it works ── */
+      .how-section { max-width: 960px; margin: 0 auto; padding: 0 24px 80px; }
+      .how-section h2 { font-size: 1.4rem; font-weight: 800; color: #fff; margin-bottom: 6px; }
+      .how-section .how-sub { color: var(--muted); font-size: 0.88rem; margin-bottom: 32px; }
+      .how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+      .how-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px 22px; }
+      .how-card .hc-icon { font-size: 1.4rem; color: var(--primary); margin-bottom: 14px; }
+      .how-card h3 { font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+      .how-card p { font-size: 0.82rem; color: var(--muted); line-height: 1.65; }
+
+      .compare-table { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-top: 20px; width: 100%; border-collapse: collapse; }
+      .compare-table th { background: rgba(224,48,48,0.08); padding: 12px 18px; text-align: left; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); border-bottom: 1px solid var(--border); }
+      .compare-table td { padding: 12px 18px; font-size: 0.85rem; color: var(--muted); border-bottom: 1px solid var(--border); }
+      .compare-table tr:last-child td { border-bottom: none; }
+      .compare-table td:first-child { color: var(--text); font-weight: 600; }
+      .tag-yes { color: #4ade80; font-weight: 700; }
+      .tag-partial { color: #fbbf24; font-weight: 700; }
+      .tag-no { color: #f87171; font-weight: 700; }
+
+      /* ── Error banner ── */
+      .error-banner { background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.3); border-radius: 10px; padding: 12px 16px; font-size: 0.88rem; color: #fca5a5; display: none; margin-top: 14px; }
+
+      @media (max-width: 640px) { .preview-grid { grid-template-columns: 1fr; } .how-grid { grid-template-columns: 1fr; } .options-row { flex-direction: column; align-items: flex-start; } }
+    </style>
+  </head>
+  <body>
+    <nav class="nav">
+      <div class="nav__inner">
+        <a class="nav__logo" href="/"><i class="fa-solid fa-shield-halved"></i> MyWeb</a>
+        <ul class="nav__links">
+          <li><a href="/search">Search</a></li>
+          <li><a href="/#features">Features</a></li>
+          <li><a href="/#pricing">Pricing</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <section class="protect-hero">
+      <span class="badge"><i class="fa-solid fa-flask"></i> Beta Feature</span>
+      <h1 style="margin-top:16px;">AI <span>Shield</span></h1>
+      <p>Apply imperceptible adversarial noise to your images — making them far harder for AI models to scrape, copy your style, or use as training data. Like Glaze and Nightshade, but right in your browser.</p>
+      <div class="badges">
+        <span><i class="fa-solid fa-eye-slash"></i> Invisible to humans</span>
+        <span><i class="fa-solid fa-robot"></i> Disrupts AI models</span>
+        <span><i class="fa-solid fa-server"></i> Processed on our server</span>
+        <span><i class="fa-solid fa-trash"></i> Never stored</span>
+      </div>
+    </section>
+
+    <div class="tool-wrap">
+      <!-- Upload zone -->
+      <div class="upload-zone" id="upload-zone">
+        <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp,image/gif" />
+        <div class="uz-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+        <h2>Drop your image here</h2>
+        <p>or click to browse — JPEG, PNG, WebP, GIF</p>
+        <p class="uz-hint">Max 20 MB &nbsp;·&nbsp; Original is never stored or shared</p>
+      </div>
+      <p style="text-align:center;margin:12px 0 0;font-size:0.82rem;color:var(--muted);">
+        No image? <button onclick="loadDemo()" style="background:none;border:none;color:var(--primary-h);font-size:0.82rem;font-family:var(--font);font-weight:600;cursor:pointer;padding:0;">Try with our demo image</button>
+      </p>
+
+      <!-- Options -->
+      <div class="options-row">
+        <label>Protection strength</label>
+        <div class="strength-btns">
+          <button class="str-btn" data-v="1" onclick="setStrength(1,this)">
+            <i class="fa-solid fa-shield" style="font-size:0.75rem;margin-right:4px;"></i>Light
+          </button>
+          <button class="str-btn active" data-v="2" onclick="setStrength(2,this)">
+            <i class="fa-solid fa-shield-halved" style="font-size:0.75rem;margin-right:4px;"></i>Medium
+          </button>
+          <button class="str-btn" data-v="3" onclick="setStrength(3,this)">
+            <i class="fa-solid fa-shield-virus" style="font-size:0.75rem;margin-right:4px;"></i>Strong
+          </button>
+        </div>
+        <span class="str-tip" id="str-tip">Balanced protection, imperceptible changes</span>
+      </div>
+
+      <button class="btn btn--primary protect-btn" id="protect-btn" onclick="processImage()" disabled>
+        <i class="fa-solid fa-shield-virus"></i> Apply AI Shield
+      </button>
+
+      <div class="error-banner" id="error-banner"></div>
+
+      <!-- Progress -->
+      <div class="progress-wrap" id="progress-wrap">
+        <div class="progress-bar-outer"><div class="progress-bar-inner" id="progress-bar"></div></div>
+        <div class="progress-label" id="progress-label">Uploading image…</div>
+      </div>
+
+      <!-- Download -->
+      <div class="download-area" id="download-area">
+        <div class="download-info">
+          <strong><i class="fa-solid fa-circle-check"></i> Protection applied!</strong><br>
+          <span id="download-desc">Your image is ready. Download the PNG — it looks identical but is now far harder for AI to use.</span>
+        </div>
+        <a class="btn btn--primary" id="download-btn" download>
+          <i class="fa-solid fa-download"></i> Download protected image
+        </a>
+      </div>
+
+      <!-- Before / After preview -->
+      <div class="preview-grid" id="preview-grid">
+        <div class="preview-card">
+          <div class="pc-label"><i class="fa-solid fa-image"></i> Original</div>
+          <img id="preview-original" src="" alt="Original image" />
+        </div>
+        <div class="preview-card">
+          <div class="pc-label"><i class="fa-solid fa-shield-halved"></i> AI-Shielded</div>
+          <img id="preview-protected" src="" alt="Protected image" />
+        </div>
+      </div>
+    </div>
+
+    <!-- How it works -->
+    <section class="how-section">
+      <h2>How AI Shield works</h2>
+      <p class="how-sub">Three layers of adversarial perturbation, all within human perceptual limits.</p>
+      <div class="how-grid">
+        <div class="how-card">
+          <div class="hc-icon"><i class="fa-solid fa-wave-square"></i></div>
+          <h3>Sinusoidal interference</h3>
+          <p>Structured patterns are added across the image in frequency space. These cause AI models to misread the low-level features they use to identify style, content, and authorship.</p>
+        </div>
+        <div class="how-card">
+          <div class="hc-icon"><i class="fa-solid fa-dice"></i></div>
+          <h3>Gaussian noise injection</h3>
+          <p>Random Gaussian-distributed perturbations are applied at the per-pixel level. Combined with structure, they push the image's feature-space embedding away from the original, disrupting style-copy AI.</p>
+        </div>
+        <div class="how-card">
+          <div class="hc-icon"><i class="fa-solid fa-chess-board"></i></div>
+          <h3>High-frequency dithering</h3>
+          <p>A high-frequency checkerboard-phase dither layer targets the convolutional filters in the first layers of neural networks — the same filters that detect edges, textures, and brush strokes.</p>
+        </div>
+      </div>
+
+      <table class="compare-table" style="margin-top:28px;">
+        <thead>
+          <tr>
+            <th>Tool</th>
+            <th>Disrupts style-copy AI</th>
+            <th>Poisons training data</th>
+            <th>Works in browser</th>
+            <th>No install needed</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>MyWeb AI Shield</td>
+            <td class="tag-yes">✓ Yes</td>
+            <td class="tag-yes">✓ Yes</td>
+            <td class="tag-yes">✓ Yes</td>
+            <td class="tag-yes">✓ Yes</td>
+          </tr>
+          <tr>
+            <td>Glaze</td>
+            <td class="tag-yes">✓ Yes</td>
+            <td class="tag-partial">~ Partial</td>
+            <td class="tag-no">✗ No (desktop app)</td>
+            <td class="tag-no">✗ No</td>
+          </tr>
+          <tr>
+            <td>Nightshade</td>
+            <td class="tag-partial">~ Partial</td>
+            <td class="tag-yes">✓ Yes</td>
+            <td class="tag-no">✗ No (desktop app)</td>
+            <td class="tag-no">✗ No</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.2);border-radius:12px;padding:16px 20px;margin-top:20px;">
+        <p style="font-size:0.82rem;color:#fbbf24;margin-bottom:6px;font-weight:700;"><i class="fa-solid fa-triangle-exclamation"></i> Beta disclaimer</p>
+        <p style="font-size:0.82rem;color:var(--muted);line-height:1.65;">This tool applies mathematically sound adversarial perturbations but does not run a live gradient attack against a specific AI model the way Glaze's research implementation does. For maximum protection on artwork intended for galleries or high-value publication, combine MyWeb AI Shield with Glaze. Always save your originals.</p>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer__inner">
+        <a class="nav__logo" href="/"><i class="fa-solid fa-shield-halved"></i> MyWeb</a>
+        <p class="footer__copy">&copy; 2026 MyWeb. All rights reserved.</p>
+        <ul class="footer__links">
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/tos">Terms</a></li>
+          <li><a href="mailto:hello@myweb.app">Contact</a></li>
+        </ul>
+      </div>
+    </footer>
+
+    <script>
+      async function loadDemo() {
+        const res = await fetch('/bee-demo.png');
+        const blob = await res.blob();
+        const file = new File([blob], 'sugarbag-bee.png', { type: 'image/png' });
+        handleFile(file);
+      }
+
+      let selectedFile = null;
+      let selectedStrength = 2;
+      let protectedBlob = null;
+
+      const tips = {
+        1: 'Minimal noise — safest for photos that need to look perfect at 100%',
+        2: 'Balanced protection, imperceptible changes',
+        3: 'Maximum disruption — slight grain possible on close inspection'
+      };
+
+      function setStrength(v, btn) {
+        selectedStrength = v;
+        document.querySelectorAll('.str-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('str-tip').textContent = tips[v];
+      }
+
+      const zone = document.getElementById('upload-zone');
+      const input = document.getElementById('file-input');
+
+      zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+      zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+      zone.addEventListener('drop', e => {
+        e.preventDefault();
+        zone.classList.remove('drag-over');
+        const file = e.dataTransfer.files[0];
+        if (file) handleFile(file);
+      });
+      input.addEventListener('change', () => { if (input.files[0]) handleFile(input.files[0]); });
+
+      function handleFile(file) {
+        if (file.size > 20 * 1024 * 1024) { showError('File is too large. Max 20 MB.'); return; }
+        if (!/^image\/(jpeg|png|webp|gif)$/.test(file.type)) { showError('Only JPEG, PNG, WebP, and GIF are supported.'); return; }
+        selectedFile = file;
+        hideError();
+
+        // Show original preview
+        const reader = new FileReader();
+        reader.onload = e => {
+          document.getElementById('preview-original').src = e.target.result;
+          document.getElementById('preview-protected').src = '';
+          document.getElementById('preview-grid').style.display = 'grid';
+          document.getElementById('download-area').style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+
+        // Update zone appearance
+        zone.querySelector('h2').textContent = file.name;
+        zone.querySelector('p:not(.uz-hint)').textContent = `${(file.size / 1024).toFixed(0)} KB — click to change`;
+        document.getElementById('protect-btn').disabled = false;
+      }
+
+      async function processImage() {
+        if (!selectedFile) return;
+        const btn = document.getElementById('protect-btn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing…';
+        hideError();
+
+        showProgress(10, 'Uploading image…');
+
+        const form = new FormData();
+        form.append('image', selectedFile);
+        form.append('strength', selectedStrength);
+
+        try {
+          showProgress(30, 'Applying adversarial noise layers…');
+
+          const res = await fetch('/api/protect-image', { method: 'POST', body: form });
+
+          showProgress(85, 'Encoding protected image…');
+
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({ error: 'Processing failed.' }));
+            throw new Error(err.error || 'Processing failed.');
+          }
+
+          const blob = await res.blob();
+          protectedBlob = blob;
+          const url = URL.createObjectURL(blob);
+
+          showProgress(100, 'Done!');
+          setTimeout(() => {
+            document.getElementById('progress-wrap').style.display = 'none';
+
+            document.getElementById('preview-protected').src = url;
+
+            const dlBtn = document.getElementById('download-btn');
+            dlBtn.href = url;
+            const baseName = selectedFile.name.replace(/\.[^.]+$/, '');
+            dlBtn.download = `${baseName}_myweb_protected.png`;
+
+            const strengthLabel = ['Light', 'Medium', 'Strong'][selectedStrength - 1];
+            document.getElementById('download-desc').textContent =
+              `${strengthLabel} protection applied. Looks identical, but AI models will struggle to read it correctly.`;
+
+            const da = document.getElementById('download-area');
+            da.style.display = 'flex';
+          }, 600);
+
+        } catch (err) {
+          document.getElementById('progress-wrap').style.display = 'none';
+          showError(err.message || 'Something went wrong. Please try again.');
+        }
+
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-shield-virus"></i> Apply AI Shield';
+      }
+
+      function showProgress(pct, label) {
+        const pw = document.getElementById('progress-wrap');
+        pw.style.display = 'block';
+        document.getElementById('progress-bar').style.width = pct + '%';
+        document.getElementById('progress-label').textContent = label;
+      }
+
+      function showError(msg) {
+        const el = document.getElementById('error-banner');
+        el.textContent = '⚠ ' + msg;
+        el.style.display = 'block';
+      }
+      function hideError() { document.getElementById('error-banner').style.display = 'none'; }
+
+      // Update nav based on login state
+      fetch('/api/me').then(r => r.json()).then(data => {
+        const cta = document.getElementById('nav-login');
+        if (data.loggedIn && cta) { cta.href = '/dashboard'; cta.textContent = 'Dashboard'; }
+      }).catch(() => {});
+    </script>
+  </body>
+</html>

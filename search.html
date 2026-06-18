@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title id="page-title">MyWeb Search — Private &amp; Secure</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <style>
+      :root { --search-max: 680px; }
+      body { min-height: 100vh; display: flex; flex-direction: column; }
+
+      /* ── Home state ── */
+      .search-home { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 24px 80px; }
+      .search-home .s-logo { font-size: 2.2rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+      .search-home .s-logo i { color: var(--primary); }
+      .search-home .s-tagline { color: var(--muted); margin-bottom: 36px; font-size: 0.95rem; }
+      .search-home .s-badges { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 18px; }
+      .search-home .s-badges span { background: var(--surface); border: 1px solid var(--border); border-radius: 99px; padding: 4px 12px; font-size: 0.78rem; color: var(--muted); }
+      .search-home .s-badges span i { color: var(--primary); margin-right: 4px; }
+
+      /* ── Results state ── */
+      .search-results-page { display: none; flex-direction: column; }
+      .results-bar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 50; }
+      .results-bar .bar-logo { font-size: 1rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 6px; white-space: nowrap; flex-shrink: 0; }
+      .results-bar .bar-logo i { color: var(--primary); }
+      .results-bar .bar-logo a { color: inherit; text-decoration: none; }
+      .results-content { max-width: 800px; margin: 0 auto; padding: 28px 24px 80px; width: 100%; }
+      .results-meta { font-size: 0.8rem; color: var(--muted); margin-bottom: 22px; }
+      .result-item { margin-bottom: 28px; }
+      .result-item__url { font-size: 0.78rem; color: var(--muted); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 6px; }
+      .result-item__url i { color: var(--primary); font-size: 0.7rem; }
+      .result-item__title { font-size: 1.05rem; font-weight: 600; color: #6cb4f5; margin-bottom: 5px; }
+      .result-item__title a { color: inherit; text-decoration: none; }
+      .result-item__title a:hover { text-decoration: underline; }
+      .result-item__snippet { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+      .results-pagination { display: flex; align-items: center; gap: 12px; margin-top: 36px; }
+      .page-btn { padding: 9px 20px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 0.9rem; cursor: pointer; font-family: var(--font); transition: all 0.18s; }
+      .page-btn:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); }
+      .page-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+      .page-info { color: var(--muted); font-size: 0.85rem; }
+      .no-results { text-align: center; padding: 60px 24px; color: var(--muted); }
+      .no-results i { font-size: 2.5rem; margin-bottom: 16px; color: var(--border); display: block; }
+
+      /* ── Shared search box ── */
+      .s-box { display: flex; align-items: center; gap: 0; border: 1.5px solid var(--border); border-radius: 14px; background: var(--surface); overflow: hidden; width: 100%; max-width: var(--search-max); transition: border-color 0.2s; }
+      .s-box:focus-within { border-color: var(--primary); }
+      .s-box i.s-icon { padding: 0 14px; color: var(--muted); font-size: 0.95rem; flex-shrink: 0; }
+      .s-box input { flex: 1; padding: 15px 0; background: transparent; border: none; outline: none; color: var(--text); font-family: var(--font); font-size: 1rem; }
+      .s-box input::placeholder { color: var(--muted); }
+      .s-box button { padding: 10px 18px; margin: 6px; border-radius: 10px; background: var(--primary); border: none; color: #fff; cursor: pointer; font-size: 0.9rem; font-family: var(--font); font-weight: 600; transition: background 0.18s; flex-shrink: 0; }
+      .s-box button:hover { background: var(--primary-h); }
+      .privacy-pill { display: inline-flex; align-items: center; gap: 5px; background: rgba(224,48,48,0.1); border: 1px solid rgba(224,48,48,0.25); border-radius: 99px; padding: 3px 10px; font-size: 0.75rem; color: var(--primary-h); font-weight: 600; }
+      .results-bar .privacy-pill { flex-shrink: 0; }
+
+      /* ── Skeleton loader ── */
+      .skeleton { border-radius: 6px; background: linear-gradient(90deg, var(--surface) 25%, #2a0f0f 50%, var(--surface) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; }
+      @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+      .sk-url { height:12px; width:200px; margin-bottom:8px; }
+      .sk-title { height:18px; width:340px; margin-bottom:8px; }
+      .sk-snip1 { height:12px; width:100%; margin-bottom:6px; }
+      .sk-snip2 { height:12px; width:70%; }
+      .sk-item { margin-bottom:28px; }
+
+      @media(max-width:600px) { .results-bar { flex-wrap: wrap; gap: 10px; } }
+    </style>
+  </head>
+  <body>
+
+    <!-- ══ HOME STATE ══ -->
+    <div class="search-home" id="home-state">
+      <nav class="nav" style="position:absolute;top:0;left:0;right:0;">
+        <div class="nav__inner">
+          <a class="nav__logo" href="/"><i class="fa-solid fa-shield-halved"></i> MyWeb</a>
+          <ul class="nav__links">
+            <li><a href="/#features">Features</a></li>
+            <li><a href="/#pricing">Pricing</a></li>
+          </ul>
+          <a class="btn btn--outline" href="/signup" id="nav-cta">Get started</a>
+        </div>
+      </nav>
+
+      <div class="s-logo"><i class="fa-solid fa-shield-halved"></i> MyWeb Search</div>
+      <p class="s-tagline">Search the web privately. No tracking. No AI overview. No logs.</p>
+
+      <form class="s-box" id="home-form" onsubmit="doSearch(event)">
+        <i class="fa-solid fa-magnifying-glass s-icon"></i>
+        <input type="text" id="home-input" placeholder="Search privately…" autocomplete="off" autofocus />
+        <button type="submit"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+      </form>
+
+      <div class="s-badges">
+        <span><i class="fa-solid fa-eye-slash"></i> No tracking</span>
+        <span><i class="fa-solid fa-ban"></i> No AI summary</span>
+        <span><i class="fa-solid fa-file-slash"></i> No logs</span>
+        <span><i class="fa-solid fa-user-slash"></i> No account needed</span>
+      </div>
+    </div>
+
+    <!-- ══ RESULTS STATE ══ -->
+    <div class="search-results-page" id="results-state">
+      <div class="results-bar">
+        <div class="bar-logo"><i class="fa-solid fa-shield-halved"></i><a href="/search">MyWeb</a></div>
+        <form class="s-box" id="results-form" onsubmit="doSearch(event)" style="flex:1;">
+          <i class="fa-solid fa-magnifying-glass s-icon"></i>
+          <input type="text" id="results-input" placeholder="Search privately…" autocomplete="off" />
+          <button type="submit">Search</button>
+        </form>
+        <span class="privacy-pill"><i class="fa-solid fa-shield-halved"></i> Private</span>
+      </div>
+
+      <div class="results-content">
+        <div class="results-meta" id="results-meta"></div>
+        <div id="results-list"></div>
+        <div class="results-pagination" id="pagination" style="display:none;">
+          <button class="page-btn" id="prev-btn" onclick="changePage(-1)">
+            <i class="fa-solid fa-arrow-left"></i> Previous
+          </button>
+          <span class="page-info" id="page-info"></span>
+          <button class="page-btn" id="next-btn" onclick="changePage(1)">
+            Next <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let currentPage = 1;
+      let currentQuery = '';
+      let hasMore = false;
+
+      function doSearch(e) {
+        e.preventDefault();
+        const q = (document.getElementById('home-input').value || document.getElementById('results-input').value).trim();
+        if (!q) return;
+        currentPage = 1;
+        currentQuery = q;
+        const url = new URL(window.location);
+        url.searchParams.set('q', q);
+        url.searchParams.delete('page');
+        history.pushState({}, '', url);
+        runSearch(q, 1);
+      }
+
+      function changePage(dir) {
+        const newPage = currentPage + dir;
+        if (newPage < 1) return;
+        if (dir > 0 && !hasMore) return;
+        currentPage = newPage;
+        const url = new URL(window.location);
+        url.searchParams.set('q', currentQuery);
+        url.searchParams.set('page', currentPage);
+        history.pushState({}, '', url);
+        runSearch(currentQuery, currentPage);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      async function runSearch(q, page) {
+        showResultsState(q);
+        showSkeleton();
+        const meta = document.getElementById('results-meta');
+        const list = document.getElementById('results-list');
+        const pag = document.getElementById('pagination');
+        meta.textContent = '';
+        pag.style.display = 'none';
+        const t0 = Date.now();
+        try {
+          const res = await fetch(`/api/search?q=${encodeURIComponent(q)}&page=${page}`);
+          const data = await res.json();
+          const elapsed = ((Date.now() - t0) / 1000).toFixed(2);
+          if (data.error) { list.innerHTML = `<div class="no-results"><i class="fa-solid fa-circle-exclamation"></i><p>${data.error}</p></div>`; return; }
+          if (!data.results || !data.results.length) {
+            list.innerHTML = `<div class="no-results"><i class="fa-solid fa-magnifying-glass"></i><p>No results found for <strong>"${escHtml(q)}"</strong>.<br>Try different keywords.</p></div>`;
+            return;
+          }
+          hasMore = data.hasMore;
+          meta.textContent = `About ${page * 10} results — ${elapsed}s — No tracking, no logs`;
+          list.innerHTML = data.results.map(r => `
+            <div class="result-item">
+              <div class="result-item__url"><i class="fa-solid fa-shield-halved"></i>${escHtml(r.displayUrl)}</div>
+              <div class="result-item__title"><a href="${escHtml(r.url)}" target="_blank" rel="noopener noreferrer">${escHtml(r.title)}</a></div>
+              <div class="result-item__snippet">${escHtml(r.snippet)}</div>
+            </div>
+          `).join('');
+          document.getElementById('page-info').textContent = `Page ${page}`;
+          document.getElementById('prev-btn').disabled = page <= 1;
+          document.getElementById('next-btn').disabled = !hasMore;
+          pag.style.display = 'flex';
+        } catch {
+          list.innerHTML = `<div class="no-results"><i class="fa-solid fa-wifi"></i><p>Network error. Please try again.</p></div>`;
+        }
+      }
+
+      function showSkeleton() {
+        const list = document.getElementById('results-list');
+        list.innerHTML = Array(5).fill(`
+          <div class="sk-item">
+            <div class="skeleton sk-url"></div>
+            <div class="skeleton sk-title"></div>
+            <div class="skeleton sk-snip1"></div>
+            <div class="skeleton sk-snip2"></div>
+          </div>`).join('');
+      }
+
+      function showResultsState(q) {
+        document.getElementById('home-state').style.display = 'none';
+        const rs = document.getElementById('results-state');
+        rs.style.display = 'flex';
+        document.getElementById('results-input').value = q;
+        document.title = `${q} — MyWeb Search`;
+      }
+
+      function escHtml(str) {
+        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+      }
+
+      // Load from URL on page load
+      window.addEventListener('load', () => {
+        const params = new URLSearchParams(window.location.search);
+        const q = params.get('q');
+        const page = parseInt(params.get('page')) || 1;
+        if (q) { currentQuery = q; currentPage = page; runSearch(q, page); }
+
+        // Update nav CTA based on login
+        fetch('/api/me').then(r=>r.json()).then(data => {
+          if (data.loggedIn) {
+            const cta = document.getElementById('nav-cta');
+            if (cta) { cta.href = '/dashboard'; cta.textContent = 'Dashboard'; }
+          }
+        }).catch(()=>{});
+      });
+
+      window.addEventListener('popstate', () => {
+        const params = new URLSearchParams(window.location.search);
+        const q = params.get('q');
+        const page = parseInt(params.get('page')) || 1;
+        if (q) { currentQuery = q; currentPage = page; runSearch(q, page); }
+        else { document.getElementById('home-state').style.display = 'flex'; document.getElementById('results-state').style.display = 'none'; document.title = 'MyWeb Search'; }
+      });
+    </script>
+  </body>
+</html>

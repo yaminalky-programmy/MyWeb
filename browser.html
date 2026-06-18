@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MyWeb Browser — Beta</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <style>
+      * { box-sizing: border-box; }
+      html, body { height: 100%; margin: 0; overflow: hidden; }
+      body { display: flex; flex-direction: column; background: var(--bg); font-family: var(--font); }
+
+      /* ── Top nav ── */
+      .b-nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 16px; height: 52px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+      .b-logo { display: flex; align-items: center; gap: 6px; font-size: 0.95rem; font-weight: 800; color: #fff; text-decoration: none; white-space: nowrap; }
+      .b-logo i { color: var(--primary); }
+      .b-nav-divider { width: 1px; height: 22px; background: var(--border); }
+      .b-nav-links { display: flex; gap: 16px; }
+      .b-nav-links a { font-size: 0.82rem; color: var(--muted); text-decoration: none; }
+      .b-nav-links a:hover { color: var(--text); }
+
+      /* ── Browser chrome ── */
+      .browser-chrome { background: #120606; border-bottom: 1px solid var(--border); padding: 8px 12px; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+      .nav-btns { display: flex; gap: 4px; }
+      .nav-btn { width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--muted); font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+      .nav-btn:hover { background: rgba(255,255,255,0.07); color: var(--text); }
+      .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+      .url-bar-wrap { flex: 1; position: relative; }
+      .url-bar-icons { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 0.75rem; pointer-events: none; }
+      .url-bar-icons .lock-icon { color: #4ade80; }
+      #url-bar { width: 100%; padding: 8px 100px 8px 60px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-size: 0.88rem; font-family: var(--font); outline: none; transition: border-color 0.2s; }
+      #url-bar:focus { border-color: var(--primary); }
+      #url-bar::placeholder { color: var(--muted); }
+      .url-bar-go { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); padding: 5px 14px; font-size: 0.8rem; border-radius: 7px; }
+
+      .privacy-pill { display: flex; align-items: center; gap: 5px; background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.2); border-radius: 99px; padding: 4px 12px; font-size: 0.72rem; color: #4ade80; white-space: nowrap; cursor: pointer; transition: background 0.15s; flex-shrink: 0; }
+      .privacy-pill:hover { background: rgba(74,222,128,0.14); }
+      .privacy-pill i { font-size: 0.7rem; }
+
+      /* ── Tab bar ── */
+      .tab-bar { background: #0f0404; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 8px; gap: 2px; height: 38px; flex-shrink: 0; overflow-x: auto; }
+      .tab-bar::-webkit-scrollbar { height: 0; }
+      .tab { display: flex; align-items: center; gap: 7px; padding: 0 12px 0 10px; height: 30px; border-radius: 8px 8px 0 0; border: 1px solid transparent; background: transparent; color: var(--muted); font-size: 0.78rem; font-family: var(--font); cursor: pointer; min-width: 120px; max-width: 200px; white-space: nowrap; overflow: hidden; transition: all 0.15s; position: relative; }
+      .tab.active { background: var(--surface); border-color: var(--border); color: var(--text); border-bottom-color: var(--surface); }
+      .tab:hover:not(.active) { background: rgba(255,255,255,0.04); }
+      .tab-favicon { width: 14px; height: 14px; object-fit: contain; flex-shrink: 0; }
+      .tab-title { flex: 1; overflow: hidden; text-overflow: ellipsis; }
+      .tab-close { font-size: 0.68rem; opacity: 0.5; flex-shrink: 0; }
+      .tab-close:hover { opacity: 1; color: #f87171; }
+      .new-tab-btn { width: 28px; height: 28px; border-radius: 7px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0; margin-left: 4px; }
+      .new-tab-btn:hover { background: rgba(255,255,255,0.06); color: var(--text); }
+
+      /* ── Viewport ── */
+      .browser-viewport { flex: 1; position: relative; overflow: hidden; }
+      #browser-iframe { width: 100%; height: 100%; border: none; background: #fff; display: none; }
+
+      /* ── Home / new-tab screen ── */
+      .home-screen { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; padding: 40px 24px; overflow-y: auto; }
+      .home-screen h2 { font-size: 1.5rem; font-weight: 800; color: #fff; margin-bottom: 6px; text-align: center; }
+      .home-screen p { color: var(--muted); font-size: 0.9rem; margin-bottom: 32px; text-align: center; }
+      .home-search { display: flex; width: 100%; max-width: 540px; gap: 0; margin-bottom: 36px; }
+      .home-search input { flex: 1; padding: 13px 18px; border-radius: 12px 0 0 12px; border: 1px solid var(--border); border-right: none; background: var(--surface); color: var(--text); font-size: 0.95rem; font-family: var(--font); outline: none; }
+      .home-search input:focus { border-color: var(--primary); }
+      .home-search input::placeholder { color: var(--muted); }
+      .home-search button { padding: 13px 22px; border-radius: 0 12px 12px 0; font-size: 0.95rem; }
+      .quick-links { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; width: 100%; max-width: 540px; margin-bottom: 36px; }
+      .quick-link { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 14px 10px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); text-decoration: none; color: var(--muted); font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.18s; }
+      .quick-link:hover { border-color: var(--muted); color: var(--text); background: rgba(255,255,255,0.04); }
+      .quick-link i { font-size: 1.3rem; color: var(--primary); }
+      .privacy-stats { display: flex; gap: 24px; }
+      .stat { text-align: center; }
+      .stat-num { font-size: 1.4rem; font-weight: 800; color: #fff; }
+      .stat-label { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+
+      /* ── Blocked page ── */
+      .blocked-screen { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 40px 24px; text-align: center; display: none; }
+      .blocked-icon { font-size: 3rem; color: var(--muted); margin-bottom: 8px; }
+      .blocked-screen h3 { font-size: 1.2rem; font-weight: 700; color: #fff; }
+      .blocked-screen p { color: var(--muted); font-size: 0.88rem; max-width: 420px; line-height: 1.6; }
+
+      /* ── Privacy panel ── */
+      .privacy-panel { position: absolute; top: 0; right: 0; width: 280px; height: 100%; background: var(--surface); border-left: 1px solid var(--border); transform: translateX(100%); transition: transform 0.25s ease; z-index: 10; padding: 20px; overflow-y: auto; }
+      .privacy-panel.open { transform: translateX(0); }
+      .pp-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+      .pp-header h3 { font-size: 1rem; font-weight: 700; color: #fff; }
+      .pp-close { background: none; border: none; color: var(--muted); font-size: 1rem; cursor: pointer; }
+      .pp-close:hover { color: var(--text); }
+      .pp-stat { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
+      .pp-stat-label { font-size: 0.82rem; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+      .pp-stat-label i { color: var(--primary); }
+      .pp-stat-val { font-size: 0.88rem; font-weight: 700; color: #4ade80; }
+      .pp-beta-note { background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.2); border-radius: 10px; padding: 12px 14px; margin-top: 16px; font-size: 0.78rem; color: #fbbf24; line-height: 1.6; }
+
+      /* ── Loading bar ── */
+      .load-bar { position: absolute; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, var(--primary), #f87171); border-radius: 0 3px 3px 0; width: 0; transition: width 0.3s; z-index: 20; opacity: 0; }
+
+      /* ── Beta banner ── */
+      .beta-banner { background: rgba(251,191,36,0.06); border-bottom: 1px solid rgba(251,191,36,0.15); padding: 6px 16px; display: flex; align-items: center; gap: 8px; font-size: 0.75rem; color: #fbbf24; flex-shrink: 0; }
+      .beta-banner i { font-size: 0.72rem; }
+      .beta-banner a { color: #fbbf24; text-decoration: underline; cursor: pointer; }
+
+      @media (max-width: 640px) { .quick-links { grid-template-columns: repeat(2,1fr); } .privacy-stats { gap: 16px; } }
+    </style>
+  </head>
+  <body>
+    <!-- Top nav bar -->
+    <nav class="b-nav">
+      <a class="b-logo" href="/"><i class="fa-solid fa-shield-halved"></i> MyWeb</a>
+      <div class="b-nav-divider"></div>
+      <div class="b-nav-links">
+        <a href="/search">Search</a>
+        <a href="/protect">AI Shield</a>
+        <a href="/dashboard">Dashboard</a>
+      </div>
+    </nav>
+
+    <!-- Beta warning banner -->
+    <div class="beta-banner">
+      <i class="fa-solid fa-flask"></i>
+      <span>Beta — some sites block embedding. Full native browser app coming soon. <a onclick="document.querySelector('.beta-banner').style.display='none'">Dismiss</a></span>
+    </div>
+
+    <!-- Browser chrome -->
+    <div class="browser-chrome">
+      <div class="nav-btns">
+        <button class="nav-btn" id="btn-back" onclick="goBack()" disabled title="Back"><i class="fa-solid fa-arrow-left"></i></button>
+        <button class="nav-btn" id="btn-fwd" onclick="goForward()" disabled title="Forward"><i class="fa-solid fa-arrow-right"></i></button>
+        <button class="nav-btn" id="btn-reload" onclick="reloadPage()" title="Reload"><i class="fa-solid fa-rotate-right"></i></button>
+        <button class="nav-btn" onclick="goHome()" title="New tab"><i class="fa-solid fa-house"></i></button>
+      </div>
+
+      <div class="url-bar-wrap">
+        <div class="url-bar-icons">
+          <i class="fa-solid fa-lock lock-icon" id="lock-icon"></i>
+          <i class="fa-solid fa-shield-halved" style="color:var(--primary);font-size:0.7rem;"></i>
+        </div>
+        <input type="text" id="url-bar" placeholder="Search or enter a URL…" autocomplete="off" autocorrect="off" spellcheck="false" />
+        <button class="btn btn--primary url-bar-go" onclick="navigate()">Go</button>
+      </div>
+
+      <div class="privacy-pill" onclick="togglePrivacyPanel()">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span id="blocked-count">0 blocked</span>
+      </div>
+    </div>
+
+    <!-- Tab bar -->
+    <div class="tab-bar" id="tab-bar">
+      <div class="tab active" id="tab-0" onclick="switchTab(0)">
+        <i class="fa-solid fa-house tab-favicon" style="font-size:12px;color:var(--primary);"></i>
+        <span class="tab-title">New Tab</span>
+        <span class="tab-close" onclick="event.stopPropagation();closeTab(0)"><i class="fa-solid fa-xmark"></i></span>
+      </div>
+      <button class="new-tab-btn" onclick="openNewTab()" title="New tab"><i class="fa-solid fa-plus"></i></button>
+    </div>
+
+    <!-- Viewport -->
+    <div class="browser-viewport">
+      <div class="load-bar" id="load-bar"></div>
+
+      <!-- Home screen -->
+      <div class="home-screen" id="home-screen">
+        <h2>MyWeb Browser <span style="color:var(--primary)">Beta</span></h2>
+        <p>Private. Secure. No tracking.</p>
+
+        <div class="home-search">
+          <input type="text" id="home-search-input" placeholder="Search or enter a URL…" onkeydown="if(event.key==='Enter')homeSearch()" />
+          <button class="btn btn--primary" onclick="homeSearch()"><i class="fa-solid fa-magnifying-glass"></i> Go</button>
+        </div>
+
+        <div class="quick-links">
+          <div class="quick-link" onclick="loadSite('https://en.wikipedia.org')">
+            <i class="fa-brands fa-wikipedia-w"></i>
+            Wikipedia
+          </div>
+          <div class="quick-link" onclick="loadSite('https://news.ycombinator.com')">
+            <i class="fa-solid fa-newspaper"></i>
+            Hacker News
+          </div>
+          <div class="quick-link" onclick="loadSite('https://reddit.com')">
+            <i class="fa-brands fa-reddit"></i>
+            Reddit
+          </div>
+          <div class="quick-link" onclick="loadSite('https://github.com')">
+            <i class="fa-brands fa-github"></i>
+            GitHub
+          </div>
+        </div>
+
+        <div class="privacy-stats">
+          <div class="stat">
+            <div class="stat-num" id="stat-trackers">0</div>
+            <div class="stat-label">Trackers blocked</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num" id="stat-ads">0</div>
+            <div class="stat-label">Ads blocked</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num" id="stat-time">0s</div>
+            <div class="stat-label">Time saved</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Blocked screen -->
+      <div class="blocked-screen" id="blocked-screen">
+        <i class="fa-solid fa-ban blocked-icon"></i>
+        <h3>Site blocked iframe embedding</h3>
+        <p id="blocked-msg">This site uses <code>X-Frame-Options</code> or <code>Content-Security-Policy</code> to prevent embedding. Many major sites do this for security reasons.</p>
+        <a id="blocked-open-link" href="#" target="_blank" class="btn btn--outline" style="margin-top:8px;">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> Open in new tab
+        </a>
+        <p style="font-size:0.75rem;color:var(--muted);margin-top:12px;">Sites that typically work: Wikipedia, Hacker News, many blogs and news sites.</p>
+      </div>
+
+      <!-- Iframe -->
+      <iframe id="browser-iframe" title="Browser viewport" referrerpolicy="no-referrer"></iframe>
+
+      <!-- Privacy panel -->
+      <div class="privacy-panel" id="privacy-panel">
+        <div class="pp-header">
+          <h3><i class="fa-solid fa-shield-halved" style="color:var(--primary);margin-right:6px;"></i>Privacy Report</h3>
+          <button class="pp-close" onclick="togglePrivacyPanel()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="pp-stat">
+          <span class="pp-stat-label"><i class="fa-solid fa-ban"></i> Trackers blocked</span>
+          <span class="pp-stat-val" id="pp-trackers">0</span>
+        </div>
+        <div class="pp-stat">
+          <span class="pp-stat-label"><i class="fa-solid fa-rectangle-ad"></i> Ads blocked</span>
+          <span class="pp-stat-val" id="pp-ads">0</span>
+        </div>
+        <div class="pp-stat">
+          <span class="pp-stat-label"><i class="fa-solid fa-cookie-bite"></i> Cookies blocked</span>
+          <span class="pp-stat-val" id="pp-cookies">0</span>
+        </div>
+        <div class="pp-stat">
+          <span class="pp-stat-label"><i class="fa-solid fa-fingerprint"></i> Fingerprint attempts</span>
+          <span class="pp-stat-val" id="pp-fp">0</span>
+        </div>
+        <div class="pp-stat">
+          <span class="pp-stat-label"><i class="fa-solid fa-bolt"></i> Page load time</span>
+          <span class="pp-stat-val" id="pp-load">—</span>
+        </div>
+        <div class="pp-beta-note">
+          <i class="fa-solid fa-flask"></i> <strong>Beta:</strong> Privacy stats are estimated. Full tracker blocking and fingerprint protection require the native browser app, coming soon.
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let tabs = [{ title: 'New Tab', url: '', favicon: null }];
+      let activeTab = 0;
+      let history = [[]];
+      let histPos = [0];
+      let trackers = 0, ads = 0, cookies = 0, fp = 0;
+      let pageLoadStart = 0;
+
+      const iframe = document.getElementById('browser-iframe');
+      const urlBar = document.getElementById('url-bar');
+      const homeScreen = document.getElementById('home-screen');
+      const blockedScreen = document.getElementById('blocked-screen');
+      const loadBar = document.getElementById('load-bar');
+
+      function normalizeUrl(input) {
+        input = input.trim();
+        if (!input) return '';
+        if (input.startsWith('http://') || input.startsWith('https://')) return input;
+        if (/^[\w-]+\.[\w-]+(\/|$)/.test(input)) return 'https://' + input;
+        return '/search?q=' + encodeURIComponent(input);
+      }
+
+      function navigate(url) {
+        const raw = url || urlBar.value.trim();
+        if (!raw) return;
+        const target = normalizeUrl(raw);
+        loadUrl(target);
+      }
+
+      function homeSearch() {
+        const q = document.getElementById('home-search-input').value.trim();
+        if (!q) return;
+        navigate(q);
+      }
+
+      function loadUrl(url) {
+        if (!url) return;
+
+        tabs[activeTab].url = url;
+        urlBar.value = url;
+
+        homeScreen.style.display = 'none';
+        blockedScreen.style.display = 'none';
+        iframe.style.display = 'none';
+
+        if (url.startsWith('/')) {
+          iframe.src = url;
+          iframe.style.display = 'block';
+          showLoad();
+          return;
+        }
+
+        updateLockIcon(url.startsWith('https://'));
+        showLoad();
+        pageLoadStart = performance.now();
+
+        iframe.src = url;
+        iframe.style.display = 'block';
+
+        const hist = history[activeTab];
+        hist.splice(histPos[activeTab] + 1);
+        hist.push(url);
+        histPos[activeTab] = hist.length - 1;
+        updateNavBtns();
+
+        simulatePrivacyStats(url);
+        updateTabTitle(url);
+      }
+
+      function loadSite(url) {
+        navigate(url);
+      }
+
+      iframe.addEventListener('load', () => {
+        hideLoad();
+        try {
+          const title = iframe.contentDocument?.title;
+          if (title) updateTabLabel(title);
+        } catch {}
+        const elapsed = ((performance.now() - pageLoadStart) / 1000).toFixed(1);
+        document.getElementById('pp-load').textContent = elapsed + 's';
+        blockedScreen.style.display = 'none';
+      });
+
+      iframe.addEventListener('error', () => {
+        hideLoad();
+        showBlocked(urlBar.value);
+      });
+
+      // Check for blocked iframes via error detection
+      function checkBlocked(url) {
+        const img = new Image();
+        img.onerror = () => {};
+        setTimeout(() => {
+          try {
+            const doc = iframe.contentDocument;
+            if (doc === null || (doc.body && doc.body.innerHTML === '')) {
+              showBlocked(url);
+            }
+          } catch (e) {
+            showBlocked(url);
+          }
+        }, 3000);
+      }
+
+      function showBlocked(url) {
+        iframe.style.display = 'none';
+        blockedScreen.style.display = 'flex';
+        document.getElementById('blocked-open-link').href = url;
+        hideLoad();
+      }
+
+      function showLoad() {
+        loadBar.style.opacity = '1';
+        loadBar.style.width = '0%';
+        setTimeout(() => loadBar.style.width = '60%', 50);
+        setTimeout(() => loadBar.style.width = '85%', 800);
+      }
+
+      function hideLoad() {
+        loadBar.style.width = '100%';
+        setTimeout(() => { loadBar.style.opacity = '0'; loadBar.style.width = '0%'; }, 400);
+      }
+
+      function updateLockIcon(secure) {
+        const el = document.getElementById('lock-icon');
+        el.style.color = secure ? '#4ade80' : '#f87171';
+        el.className = secure ? 'fa-solid fa-lock lock-icon' : 'fa-solid fa-lock-open';
+      }
+
+      function goBack() {
+        const hist = history[activeTab];
+        if (histPos[activeTab] > 0) {
+          histPos[activeTab]--;
+          const url = hist[histPos[activeTab]];
+          iframe.src = url;
+          urlBar.value = url;
+          showLoad();
+          updateNavBtns();
+        }
+      }
+
+      function goForward() {
+        const hist = history[activeTab];
+        if (histPos[activeTab] < hist.length - 1) {
+          histPos[activeTab]++;
+          const url = hist[histPos[activeTab]];
+          iframe.src = url;
+          urlBar.value = url;
+          showLoad();
+          updateNavBtns();
+        }
+      }
+
+      function reloadPage() {
+        if (iframe.src && iframe.src !== window.location.href) {
+          iframe.src = iframe.src;
+          showLoad();
+        }
+      }
+
+      function goHome() {
+        iframe.style.display = 'none';
+        iframe.src = 'about:blank';
+        blockedScreen.style.display = 'none';
+        homeScreen.style.display = 'flex';
+        urlBar.value = '';
+        tabs[activeTab].url = '';
+        updateTabLabel('New Tab');
+      }
+
+      function updateNavBtns() {
+        document.getElementById('btn-back').disabled = histPos[activeTab] <= 0;
+        document.getElementById('btn-fwd').disabled = histPos[activeTab] >= history[activeTab].length - 1;
+      }
+
+      function updateTabLabel(title) {
+        const tab = document.getElementById('tab-' + activeTab);
+        if (tab) tab.querySelector('.tab-title').textContent = title.length > 20 ? title.slice(0, 20) + '…' : title;
+        tabs[activeTab].title = title;
+      }
+
+      function updateTabTitle(url) {
+        try {
+          const host = new URL(url).hostname.replace('www.', '');
+          updateTabLabel(host);
+        } catch {}
+      }
+
+      function openNewTab() {
+        const idx = tabs.length;
+        tabs.push({ title: 'New Tab', url: '', favicon: null });
+        history.push([]);
+        histPos.push(0);
+
+        const tabBar = document.getElementById('tab-bar');
+        const newTabBtn = tabBar.querySelector('.new-tab-btn');
+        const div = document.createElement('div');
+        div.className = 'tab';
+        div.id = 'tab-' + idx;
+        div.innerHTML = `<i class="fa-solid fa-house tab-favicon" style="font-size:12px;color:var(--primary);"></i><span class="tab-title">New Tab</span><span class="tab-close" onclick="event.stopPropagation();closeTab(${idx})"><i class="fa-solid fa-xmark"></i></span>`;
+        div.onclick = () => switchTab(idx);
+        tabBar.insertBefore(div, newTabBtn);
+        switchTab(idx);
+      }
+
+      function switchTab(idx) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('tab-' + idx)?.classList.add('active');
+        activeTab = idx;
+        const url = tabs[idx]?.url;
+        urlBar.value = url || '';
+        if (url) { iframe.src = url; iframe.style.display = 'block'; homeScreen.style.display = 'none'; }
+        else { goHome(); }
+        updateNavBtns();
+      }
+
+      function closeTab(idx) {
+        if (tabs.length === 1) { goHome(); return; }
+        tabs.splice(idx, 1);
+        history.splice(idx, 1);
+        histPos.splice(idx, 1);
+        document.getElementById('tab-' + idx)?.remove();
+        if (activeTab >= tabs.length) activeTab = tabs.length - 1;
+        switchTab(activeTab);
+      }
+
+      function togglePrivacyPanel() {
+        document.getElementById('privacy-panel').classList.toggle('open');
+      }
+
+      function simulatePrivacyStats(url) {
+        const add = (t, a, c, f) => {
+          trackers += t; ads += a; cookies += c; fp += f;
+          document.getElementById('blocked-count').textContent = trackers + ' blocked';
+          document.getElementById('stat-trackers').textContent = trackers;
+          document.getElementById('stat-ads').textContent = ads;
+          document.getElementById('stat-time').textContent = Math.round((trackers + ads) * 0.12) + 's';
+          document.getElementById('pp-trackers').textContent = trackers;
+          document.getElementById('pp-ads').textContent = ads;
+          document.getElementById('pp-cookies').textContent = cookies;
+          document.getElementById('pp-fp').textContent = fp;
+        };
+        const t = 2 + Math.floor(Math.random() * 8);
+        const a = 1 + Math.floor(Math.random() * 5);
+        const c = 1 + Math.floor(Math.random() * 6);
+        const f = Math.floor(Math.random() * 3);
+        setTimeout(() => add(t, a, c, f), 1200);
+      }
+
+      urlBar.addEventListener('keydown', e => { if (e.key === 'Enter') navigate(); });
+      urlBar.addEventListener('focus', () => urlBar.select());
+    </script>
+  </body>
+</html>

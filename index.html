@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MyWeb — Protect Your Privacy</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+  </head>
+  <body>
+
+    <!-- NAV -->
+    <nav class="nav">
+      <div class="nav__inner">
+        <a class="nav__logo" href="#">
+          <i class="fa-solid fa-shield-halved"></i> MyWeb
+        </a>
+        <ul class="nav__links">
+          <li><a href="#features">Features</a></li>
+          <li><a href="/search">Search</a></li>
+          <li><a href="/protect">AI Shield</a></li>
+          <li><a href="#compare">Compare</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+        </ul>
+        <a class="btn btn--primary" href="/signup" id="nav-cta">Get started</a>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero__glow"></div>
+      <div class="hero__inner">
+        <span class="badge"><i class="fa-solid fa-lock"></i> Privacy-first by design</span>
+        <h1 class="hero__headline">
+          The best way to<br />protect your <span class="gradient-text">privacy online</span>
+        </h1>
+        <p class="hero__sub">
+          Built-in website scanning, VPN, password manager, and a secure browser — all in one app.
+        </p>
+        <div class="hero__ctas">
+          <a class="btn btn--primary" href="/signup">
+            <i class="fa-solid fa-user-plus"></i> Create a free account
+          </a>
+          <a class="btn btn--ghost" href="#how">
+            See how it works <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+        <p class="hero__note">No credit card required &bull; Free forever plan available</p>
+      </div>
+    </section>
+
+    <!-- TRUST BAR -->
+    <div class="trust">
+      <div class="trust__inner">
+        <span>Trusted by</span>
+        <strong>1 M+ users</strong>
+        <span class="trust__divider">|</span>
+        <i class="fa-solid fa-star"></i>
+        <i class="fa-solid fa-star"></i>
+        <i class="fa-solid fa-star"></i>
+        <i class="fa-solid fa-star"></i>
+        <i class="fa-solid fa-star"></i>
+        <strong>4.9 / 5</strong>
+        <span class="trust__divider">|</span>
+        <span>Available on iOS, Android &amp; Desktop</span>
+      </div>
+    </div>
+
+    <!-- FEATURES -->
+    <section class="features" id="features">
+      <div class="section-header">
+        <span class="badge">What's included</span>
+        <h2>Everything you need to stay safe</h2>
+        <p>One subscription. Total protection.</p>
+      </div>
+      <div class="features__grid">
+
+        <div class="card">
+          <div class="card__icon card__icon--blue">
+            <i class="fa-solid fa-wifi"></i>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+            <h3 style="margin:0;">VPN</h3>
+            <span style="font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:99px;background:rgba(74,222,128,0.12);color:#4ade80;border:1px solid rgba(74,222,128,0.25);">FREE 5 GB</span>
+          </div>
+          <p>Hide your IP, encrypt your connection, and browse freely — even on public Wi-Fi.</p>
+        </div>
+
+        <div class="card">
+          <div class="card__icon card__icon--purple">
+            <i class="fa-solid fa-key"></i>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+            <h3 style="margin:0;">Password Manager</h3>
+            <span style="font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:99px;background:rgba(74,222,128,0.12);color:#4ade80;border:1px solid rgba(74,222,128,0.25);">FREE</span>
+          </div>
+          <p>Generate, store, and autofill strong passwords across all your devices securely.</p>
+        </div>
+
+        <div class="card">
+          <div class="card__icon card__icon--green">
+            <i class="fa-solid fa-magnifying-glass-chart"></i>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+            <h3 style="margin:0;">Website Scanner</h3>
+            <span style="font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:99px;background:rgba(74,222,128,0.12);color:#4ade80;border:1px solid rgba(74,222,128,0.25);">FREE</span>
+          </div>
+          <p>Instantly check any website for threats, trackers, and malicious content before you visit.</p>
+        </div>
+
+        <div class="card" style="position:relative;">
+          <div class="card__icon card__icon--orange">
+            <i class="fa-solid fa-globe"></i>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+            <h3 style="margin:0;">Secure Browser</h3>
+            <span style="font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:99px;background:rgba(224,48,48,0.15);color:var(--primary);border:1px solid rgba(224,48,48,0.3);">PRO</span>
+          </div>
+          <p>A built-in browser with ad blocking, anti-fingerprinting, and zero data collection.</p>
+        </div>
+
+        <div class="card">
+          <div class="card__icon card__icon--red">
+            <i class="fa-solid fa-bell-slash"></i>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+            <h3 style="margin:0;">Tracker Blocker</h3>
+            <span style="font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:99px;background:rgba(74,222,128,0.12);color:#4ade80;border:1px solid rgba(74,222,128,0.25);">FREE</span>
+          </div>
+          <p>Block thousands of invisible trackers that follow you across the web, silently.</p>
+        </div>
+
+        <div class="card">
+          <div class="card__icon card__icon--teal">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+            <h3 style="margin:0;">Breach Alerts</h3>
+            <span style="font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:99px;background:rgba(224,48,48,0.15);color:var(--primary);border:1px solid rgba(224,48,48,0.3);">PRO</span>
+          </div>
+          <p>Get notified the moment your email or password appears in a known data breach.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PRICING -->
+    <section class="pricing" id="pricing">
+      <div class="section-header">
+        <span class="badge">Plans &amp; pricing</span>
+        <h2>Start free. Go further when you need it.</h2>
+        <p>Every plan includes the essentials. Upgrade for advanced protection.</p>
+      </div>
+      <div class="pricing__grid">
+
+        <!-- FREE -->
+        <div class="pricing__card">
+          <div class="pricing__tier">Free</div>
+          <div class="pricing__price"><span class="pricing__amount">$0</span><span class="pricing__period">/ month</span></div>
+          <p class="pricing__desc">Essential privacy for everyday browsing.</p>
+          <a class="btn btn--outline pricing__cta" href="#signup">Get started free</a>
+          <ul class="pricing__features">
+            <li><i class="fa-solid fa-check"></i> VPN (5 GB / month)</li>
+            <li><i class="fa-solid fa-check"></i> Password Manager</li>
+            <li><i class="fa-solid fa-check"></i> Tracker &amp; ad blocker</li>
+            <li><i class="fa-solid fa-check"></i> Website threat scanner</li>
+            <li><i class="fa-solid fa-check"></i> Cookie pop-up blocker</li>
+            <li class="pricing__feature--muted"><i class="fa-solid fa-minus"></i> Dark Web monitoring</li>
+            <li class="pricing__feature--muted"><i class="fa-solid fa-minus"></i> Identity theft protection</li>
+            <li class="pricing__feature--muted"><i class="fa-solid fa-minus"></i> Personal data removal</li>
+          </ul>
+        </div>
+
+        <!-- PRO -->
+        <div class="pricing__card pricing__card--featured">
+          <div class="pricing__badge-pill">Most popular</div>
+          <div class="pricing__tier">Pro</div>
+          <div class="pricing__price"><span class="pricing__amount">$7</span><span class="pricing__period">/ month</span></div>
+          <p class="pricing__desc">Full privacy suite for serious protection.</p>
+          <a class="btn btn--primary pricing__cta" href="#signup">Start 7-day free trial</a>
+          <ul class="pricing__features">
+            <li><i class="fa-solid fa-check"></i> Unlimited VPN</li>
+            <li><i class="fa-solid fa-check"></i> Password Manager</li>
+            <li><i class="fa-solid fa-check"></i> Tracker &amp; ad blocker</li>
+            <li><i class="fa-solid fa-check"></i> Website threat scanner</li>
+            <li><i class="fa-solid fa-check"></i> Cookie pop-up blocker</li>
+            <li><i class="fa-solid fa-check"></i> Dark Web monitoring</li>
+            <li><i class="fa-solid fa-check"></i> Breach alerts &amp; notifications</li>
+            <li class="pricing__feature--muted"><i class="fa-solid fa-minus"></i> Identity theft protection</li>
+            <li class="pricing__feature--muted"><i class="fa-solid fa-minus"></i> Personal data removal</li>
+          </ul>
+        </div>
+
+        <!-- ULTIMATE -->
+        <div class="pricing__card pricing__card--dark">
+          <div class="pricing__tier">Ultimate</div>
+          <div class="pricing__price"><span class="pricing__amount">$19</span><span class="pricing__period">/ month</span></div>
+          <p class="pricing__desc">Maximum privacy. Total digital security.</p>
+          <a class="btn btn--primary pricing__cta" href="#signup">Start 7-day free trial</a>
+          <ul class="pricing__features">
+            <li><i class="fa-solid fa-check"></i> Everything in Pro</li>
+            <li><i class="fa-solid fa-check"></i> Multi-hop VPN</li>
+            <li><i class="fa-solid fa-check"></i> Identity theft protection</li>
+            <li><i class="fa-solid fa-check"></i> Personal data removal</li>
+            <li><i class="fa-solid fa-check"></i> Encrypted cloud storage (50 GB)</li>
+            <li><i class="fa-solid fa-check"></i> Private secure email</li>
+            <li><i class="fa-solid fa-check"></i> Credit &amp; SSN monitoring</li>
+            <li><i class="fa-solid fa-check"></i> $1M identity theft insurance</li>
+          </ul>
+        </div>
+
+      </div>
+      <p class="pricing__note">All plans billed monthly. Annual plans save 40%. Cancel anytime.</p>
+    </section>
+
+    <!-- COMPARISON -->
+    <section class="compare" id="compare">
+      <div class="section-header">
+        <span class="badge">See how MyWeb compares</span>
+        <h2>More protection than the rest</h2>
+        <p>See what you're missing with other browsers and extensions.</p>
+      </div>
+
+      <!-- Competitor tabs -->
+      <div class="compare__tabs">
+        <button class="compare__tab active" data-col="chrome">
+          <img style="width:15px;height:15px;vertical-align:middle;" src="https://upload.wikimedia.org/wikipedia/commons/e/e1/Google_Chrome_icon_%28February_2022%29.svg" alt="Chrome" /> Chrome
+        </button>
+        <button class="compare__tab" data-col="firefox">
+          <img style="width:15px;height:15px;vertical-align:middle;" src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Firefox_logo%2C_2019.svg" alt="Firefox" /> Firefox
+        </button>
+        <button class="compare__tab" data-col="safari">
+          <img style="width:15px;height:15px;vertical-align:middle;" src="https://upload.wikimedia.org/wikipedia/commons/5/52/Safari_browser_logo.svg" alt="Safari" /> Safari
+        </button>
+        <button class="compare__tab" data-col="brave">
+          <img class="compare__tab-logo" src="https://brave.com/static-assets/images/brave-logo-sans-text.svg" alt="Brave" /> Brave
+        </button>
+      </div>
+
+      <div class="compare__table-wrap">
+        <table class="compare__table">
+          <thead>
+            <tr>
+              <th class="compare__feature-col">Feature</th>
+              <th class="compare__them-col"><span class="compare__them-label" id="compare-them-label"><img style="width:14px;height:14px;vertical-align:middle;" src="https://upload.wikimedia.org/wikipedia/commons/e/e1/Google_Chrome_icon_%28February_2022%29.svg" alt="Chrome" /> Chrome</span></th>
+              <th class="compare__us-col"><i class="fa-solid fa-shield-halved"></i> MyWeb</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><i class="fa-solid fa-magnifying-glass"></i> Private search by default</td>
+              <td class="compare__cell"><span class="compare__val" data-chrome="no" data-firefox="no" data-safari="no" data-brave="yes"></span></td>
+              <td class="compare__cell compare__cell--us"><span class="compare__icon compare__icon--yes"><i class="fa-solid fa-check"></i></span></td>
+            </tr>
+            <tr>
+              <td><i class="fa-solid fa-ban"></i> Blocks 3rd-party trackers</td>
+              <td class="compare__cell"><span class="compare__val" data-chrome="no" data-firefox="partial" data-safari="partial" data-brave="yes"></span></td>
+              <td class="compare__cell compare__cell--us"><span class="compare__icon compare__icon--yes"><i class="fa-solid fa-check"></i></span></td>
+            </tr>
+            <tr>
+              <td><i class="fa-solid fa-rectangle-ad"></i> Blocks targeted ads</td>
+              <td class="compare__cell"><span class="compare__val" data-chrome="no" data-firefox="no" data-safari="partial" data-brave="yes"></span></td>
+              <td class="compare__cell compare__cell--us"><span class="compare__icon compare__icon--yes"><i class="fa-solid fa-check"></i></span></td>
+            </tr>
+            <tr>
+              <td><i class="fa-solid fa-cookie-bite"></i> Blocks cookie pop-ups</td>
+              <td class="compare__cell"><span class="compare__val" data-chrome="no" data-firefox="no" data-safari="no" data-brave="partial"></span></td>
+              <td class="compare__cell compare__cell--us"><span class="compare__icon compare__icon--yes"><i class="fa-solid fa-check"></i></span></td>
+            </tr>
+            <tr>
+              <td><i class="fa-solid fa-key"></i> Built-in password manager</td>
+              <td class="compare__cell"><span class="compare__val" data-chrome="partial" data-firefox="partial" data-safari="partial" data-brave="partial"></span></td>
+              <td class="compare__cell compare__cell--us"><span class="compare__icon compare__icon--yes"><i class="fa-solid fa-check"></i></span></td>
+            </tr>
+            <tr>
+              <td><i class="fa-solid fa-wifi"></i> Built-in VPN</td>
+              <td class="compare__cell"><span class="compare__val" data-chrome="no" data-firefox="no" data-safari="no" data-brave="paid"></span></td>
+              <td class="compare__cell compare__cell--us"><span class="compare__icon compare__icon--yes"><i class="fa-solid fa-check"></i></span></td>
+            </tr>
+            <tr>
+              <td><i class="fa-solid fa-magnifying-glass-chart"></i> Threat &amp; malware scanning</td>
+              <td class="compare__cell"><span class="compare__val" data-chrome="partial" data-firefox="partial" data-safari="no" data-brave="no"></span></td>
+              <td class="compare__cell compare__cell--us"><span class="compare__icon compare__icon--yes"><i class="fa-solid fa-check"></i></span></td>
+            </tr>
+            <tr>
+              <td><i class="fa-solid fa-bell-slash"></i> Fingerprint protection</td>
+              <td class="compare__cell"><span class="compare__val" data-chrome="no" data-firefox="partial" data-safari="partial" data-brave="yes"></span></td>
+              <td class="compare__cell compare__cell--us"><span class="compare__icon compare__icon--yes"><i class="fa-solid fa-check"></i></span></td>
+            </tr>
+            <tr>
+              <td><i class="fa-solid fa-triangle-exclamation"></i> Data breach alerts</td>
+              <td class="compare__cell"><span class="compare__val" data-chrome="no" data-firefox="partial" data-safari="no" data-brave="no"></span></td>
+              <td class="compare__cell compare__cell--us"><span class="compare__icon compare__icon--yes"><i class="fa-solid fa-check"></i></span></td>
+            </tr>
+            <tr>
+              <td><i class="fa-solid fa-fingerprint"></i> Zero data collection policy</td>
+              <td class="compare__cell"><span class="compare__val" data-chrome="no" data-firefox="no" data-safari="no" data-brave="partial"></span></td>
+              <td class="compare__cell compare__cell--us"><span class="compare__icon compare__icon--yes"><i class="fa-solid fa-check"></i></span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="compare__legend">
+        <span><span class="compare__icon compare__icon--yes" style="width:20px;height:20px;font-size:0.65rem"><i class="fa-solid fa-check"></i></span> Included</span>
+        <span><span class="compare__icon compare__icon--partial" style="width:20px;height:20px;font-size:0.65rem"><i class="fa-solid fa-minus"></i></span> Limited</span>
+        <span><span class="compare__icon compare__icon--paid" style="width:20px;height:20px;font-size:0.65rem"><i class="fa-solid fa-dollar-sign"></i></span> Paid add-on</span>
+        <span><span class="compare__icon compare__icon--no" style="width:20px;height:20px;font-size:0.65rem"><i class="fa-solid fa-xmark"></i></span> Not available</span>
+      </p>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="how" id="how">
+      <div class="section-header">
+        <span class="badge">How it works</span>
+        <h2>Up and running in minutes</h2>
+        <p>No technical knowledge needed.</p>
+      </div>
+      <div class="how__steps">
+        <div class="step">
+          <div class="step__num">1</div>
+          <h3>Create your free account</h3>
+          <p>Sign up with just your email — no personal information required.</p>
+        </div>
+        <div class="step__arrow"><i class="fa-solid fa-arrow-right"></i></div>
+        <div class="step">
+          <div class="step__num">2</div>
+          <h3>Download MyWeb</h3>
+          <p>Get the app on your phone, install the browser extension, or use the browser.</p>
+        </div>
+        <div class="step__arrow"><i class="fa-solid fa-arrow-right"></i></div>
+        <div class="step">
+          <div class="step__num">3</div>
+          <h3>Browse with confidence</h3>
+          <p>Every connection is protected. Every password is secured. Every site is scanned.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- DOWNLOAD -->
+    <section class="download" id="download">
+      <div class="download__inner">
+        <span class="badge badge--light">Get MyWeb</span>
+        <h2>Available everywhere you browse</h2>
+        <p>One account, all your devices.</p>
+        <div class="download__btns">
+          <a class="btn btn--primary" href="#">
+            <i class="fa-brands fa-apple"></i> Download for iOS
+          </a>
+          <a class="btn btn--primary" href="#">
+            <i class="fa-brands fa-android"></i> Download for Android
+          </a>
+          <a class="btn btn--outline-light" href="#">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/Google_Chrome_icon_%28February_2022%29.svg" alt="Chrome" style="width:18px;height:18px;vertical-align:middle;" /> Chrome Extension
+          </a>
+          <a class="btn btn--outline-light" href="/browser">
+            <i class="fa-solid fa-globe"></i> Get the Browser
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- SIGNUP CTA -->
+    <section class="signup" id="signup">
+      <div class="signup__inner">
+        <h2>Start protecting yourself today</h2>
+        <p>Free forever. No credit card required.</p>
+        <form class="signup__form">
+          <input type="email" placeholder="Enter your email address" required />
+          <button class="btn btn--primary" type="submit">Create free account</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer__inner">
+        <a class="nav__logo" href="#">
+          <i class="fa-solid fa-shield-halved"></i> MyWeb
+        </a>
+        <p class="footer__copy">&copy; 2026 MyWeb. All rights reserved.</p>
+        <ul class="footer__links">
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/tos">Terms</a></li>
+          <li><a href="mailto:hello@myweb.app">Contact</a></li>
+        </ul>
+      </div>
+    </footer>
+
+  <script>
+    const tabLabels = { chrome: '<img style="width:16px;height:16px;object-fit:contain;vertical-align:middle;" src="https://upload.wikimedia.org/wikipedia/commons/e/e1/Google_Chrome_icon_%28February_2022%29.svg" alt="Chrome" /> Chrome', firefox: '<img style="width:16px;height:16px;object-fit:contain;vertical-align:middle;" src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Firefox_logo%2C_2019.svg" alt="Firefox" /> Firefox', safari: '<img style="width:16px;height:16px;object-fit:contain;vertical-align:middle;" src="https://upload.wikimedia.org/wikipedia/commons/5/52/Safari_browser_logo.svg" alt="Safari" /> Safari', brave: '<img class="compare__tab-logo" src="https://brave.com/static-assets/images/brave-logo-sans-text.svg" alt="Brave" /> Brave' };
+    const iconMap = {
+      yes:     '<span class="compare__icon compare__icon--yes"><i class="fa-solid fa-check"></i></span>',
+      no:      '<span class="compare__icon compare__icon--no"><i class="fa-solid fa-xmark"></i></span>',
+      partial: '<span class="compare__icon compare__icon--partial"><i class="fa-solid fa-minus"></i></span>',
+      paid:    '<span class="compare__icon compare__icon--paid"><i class="fa-solid fa-dollar-sign"></i></span>'
+    };
+
+    function switchTab(col) {
+      document.querySelectorAll('.compare__tab').forEach(t => t.classList.toggle('active', t.dataset.col === col));
+      document.getElementById('compare-them-label').innerHTML = tabLabels[col];
+      document.querySelectorAll('[data-chrome]').forEach(el => {
+        el.innerHTML = iconMap[el.dataset[col]] || iconMap['no'];
+      });
+    }
+
+    document.querySelectorAll('.compare__tab').forEach(tab => {
+      tab.addEventListener('click', () => switchTab(tab.dataset.col));
+    });
+
+    switchTab('chrome');
+  </script>
+  </body>
+</html>
